@@ -16,10 +16,9 @@ int main()
 	MTCNNDetector* detector = new MTCNNDetector(mtcnnmodel);
 	cout << "Mtcnn loaded successfully... Detecting database" << endl;
 	detector->datasetAlign(dataset, aligned);
-	cout << "chua loi gi ca" << endl;
-	Facenet* facenet = new Facenet(facenetModel, facenetModeltxt);
-	cout << "Facenet loaded successfully... Detecting database" << endl;
-	facenet->datasetExtract(dataset, aligned);
+	// Facenet* facenet = new Facenet(facenetModel, facenetModeltxt);
+	// cout << "Facenet loaded successfully... Detecting database" << endl;
+	// facenet->datasetExtract(dataset, aligned);
 	
 	//Video or picture path can be imported
 	//Mode: 0 camera, 1 video, 2 pictures
@@ -29,11 +28,12 @@ int main()
 	cin >> path >> mode;
 	cout << "Press q to exit" << endl;
 	Camera *camera = new Camera(path, mode);
-	camera->videoShow(detector, facenet);
+	// camera->videoShow(detector, facenet);
+	camera->videoShow(detector);
 	
 
 	delete detector;
 	delete camera;
-	delete facenet;
+	// delete facenet;
 	return 0;
 }

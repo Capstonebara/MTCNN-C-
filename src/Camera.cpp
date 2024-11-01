@@ -11,6 +11,7 @@ Camera::Camera(string videopath, int mode)
 		cap_ = cv::VideoCapture(0);
 
 }
+
 //Draw face rectangle and display face label
 void Camera::DramRect(cv::Mat& img, vector<Face>& faces, vector<string>& label)
 {
@@ -32,10 +33,11 @@ void Camera::DramRect(cv::Mat& img, vector<Face>& faces, vector<string>& label)
 		cv::putText(img, label[i], cv::Point(screct.tl().x, screct.tl().y),
 			cv::FONT_HERSHEY_TRIPLEX, frntsize, color);
 	}
-	std::cout << "Draw xong roi" << std::endl;
+	// std::cout << "Draw xong roi" << std::endl;
 }
 
-void Camera::faceRecognition(cv::Mat& img, vector<Face>& faces, vector<string>& label, MTCNNDetector* detector, Facenet* facenet)
+// void Camera::faceRecognition(cv::Mat& img, vector<Face>& faces, vector<string>& label, MTCNNDetector* detector, Facenet* facenet)
+void Camera::faceRecognition(cv::Mat& img, vector<Face>& faces, vector<string>& label, MTCNNDetector* detector)
 {
     double threshold = 1.1;
     for (int i = 0; i < faces.size(); i++)
@@ -77,21 +79,21 @@ void Camera::faceRecognition(cv::Mat& img, vector<Face>& faces, vector<string>& 
             }
 
             // Extract features with dimension checking
-            cv::Mat feat;
-            try {
-                feat = facenet->featureExtract(processedImg);
-                if (feat.empty()) {
-                    std::cout << "Warning: Feature extraction produced empty result" << std::endl;
-                    continue;
-                }
-            }
-            catch (const cv::Exception& e) {
-                std::cerr << "Feature extraction error: " << e.what() << std::endl;
-                continue;
-            }
+            // cv::Mat feat;
+            // try {
+            //     feat = facenet->featureExtract(processedImg);
+            //     if (feat.empty()) {
+            //         std::cout << "Warning: Feature extraction produced empty result" << std::endl;
+            //         continue;
+            //     }
+            // }
+            // catch (const cv::Exception& e) {
+            //     std::cerr << "Feature extraction error: " << e.what() << std::endl;
+            //     continue;
+            // }
 
             // Face recognition
-            label[i] = facenet->faceRecognition(feat, threshold);
+            // label[i] = facenet->faceRecognition(feat, threshold);
         }
         catch (const cv::Exception& e) {
             std::cerr << "OpenCV error in face recognition: " << e.what() << std::endl;
@@ -102,11 +104,11 @@ void Camera::faceRecognition(cv::Mat& img, vector<Face>& faces, vector<string>& 
             continue;
         }
     }
-	std::cout << "Face recognition xong" << std::endl;
 }
 
 //Read videos or pictures
-void Camera::videoShow(MTCNNDetector* detector, Facenet* facenet)
+// void Camera::videoShow(MTCNNDetector* detector, Facenet* facenet)
+void Camera::videoShow(MTCNNDetector* detector)
 {
     if (mode_ != 2 && !cap_.isOpened()) {
         std::cerr << "Error: Camera or video file not opened" << std::endl;
@@ -137,7 +139,6 @@ void Camera::videoShow(MTCNNDetector* detector, Facenet* facenet)
                     scale = h / 108.0;
                     h = static_cast<int>(h / scale);
                     w = static_cast<int>(w / scale);
-					std::cout << "Loi cho nay chang" << std::endl;
                     cv::resize(img, scimg, cv::Size(w, h), 0, 0, cv::INTER_LINEAR);
                 } else {
                     scimg = img.clone();
@@ -161,10 +162,10 @@ void Camera::videoShow(MTCNNDetector* detector, Facenet* facenet)
                         }
 
                         // Perform face recognition every 2 frames if faces are detected
-                        if (frame % 2 == 0 && !faces.empty()) {
-                            faceRecognition(img, faces, label, detector, facenet);
-                            lastface_num = faces.size();
-                        }
+                        // if (frame % 2 == 0 && !faces.empty()) {
+                        //     faceRecognition(img, faces, label, detector, facenet);
+                        //     lastface_num = faces.size();
+                        // }
                     }
                     catch (const cv::Exception& e) {
                         std::cerr << "Face detection error: " << e.what() << std::endl;
@@ -186,36 +187,35 @@ void Camera::videoShow(MTCNNDetector* detector, Facenet* facenet)
             }
         }
         cap_.release();
-		std::cout << "Deo loi gi ca" << std::endl;
 	}
-	else if (mode_ == 2)
-	{
-		img = cv::imread(videoPath_);
-		int h = img.rows;
-		int w = img.cols;
-		if (h > 480)
-		{
-			float scale = h / 480.0;
-			h = h / scale;
-			w = w / scale;
-			cv::resize(img, img, cv::Size(w, h));
-		}
+	// else if (mode_ == 2)
+	// {
+	// 	img = cv::imread(videoPath_);
+	// 	int h = img.rows;
+	// 	int w = img.cols;
+	// 	if (h > 480)
+	// 	{
+	// 		float scale = h / 480.0;
+	// 		h = h / scale;
+	// 		w = w / scale;
+	// 		cv::resize(img, img, cv::Size(w, h));
+	// 	}
 		
-		vector<Face> faces = detector->detect(img, 20.f, 1.f,0.709f);
-		vector<string> label(faces.size());
-		std::cout << "Loi cho nay chang" << std::endl;
+	// 	vector<Face> faces = detector->detect(img, 20.f, 1.f,0.709f);
+	// 	vector<string> label(faces.size());
+	// 	std::cout << "Loi cho nay chang" << std::endl;
 
-		label.resize(faces.size(),"none");
-		std::cout << "Loi cho nay chang" << std::endl;
-		faceRecognition(img, faces, label, detector, facenet);
+	// 	label.resize(faces.size(),"none");
+	// 	std::cout << "Loi cho nay chang" << std::endl;
+	// 	faceRecognition(img, faces, label, detector, facenet);
 	
-		DramRect(img, faces, label);
+	// 	DramRect(img, faces, label);
 
-		cv::imshow("img", img);
-		int key = cv::waitKey(10000);
-		if (key == 'q')
-			return;
-	}
+	// 	cv::imshow("img", img);
+	// 	int key = cv::waitKey(10000);
+	// 	if (key == 'q')
+	// 		return;
+	// }
 	
 }
 

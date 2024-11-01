@@ -15,8 +15,10 @@ class Camera
 public:
 	Camera(string videopath, int mode);
 	void DramRect(cv::Mat& img, vector<Face>& faces, vector<string>& label);
-	void videoShow(MTCNNDetector* detector, Facenet* facenet);
-	void faceRecognition(cv::Mat& img, vector<Face>& faces, vector<string>& label, MTCNNDetector* detector, Facenet* facenet);
+	// void videoShow(MTCNNDetector* detector, Facenet* facenet);
+	void videoShow(MTCNNDetector* detector);
+	// void faceRecognition(cv::Mat& img, vector<Face>& faces, vector<string>& label, MTCNNDetector* detector, Facenet* facenet);
+	void faceRecognition(cv::Mat& img, vector<Face>& faces, vector<string>& label, MTCNNDetector* detector);
 	~Camera();
 private:
 	string videoPath_;
